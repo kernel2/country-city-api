@@ -48,10 +48,41 @@ class CountryControllerIntegrationTest {
         assertFalse(body.get("content").isEmpty());
     }
 
+    @Test
+    void shouldCreateCountry() throws Exception {
+        String payload = "{\"name\":\"Portugal\"}";
+        HttpResponse<String> response = sendPost("/countries", payload);
+        JsonNode body = objectMapper.readTree(response.body());
+
+        assertEquals(201, response.statusCode());
+        assertEquals("Portugal", body.get("name").asText());
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreateCountryPayloadIsInvalid() throws Exception {
+        String payload = "{\"name\":\"\"}";
+        HttpResponse<String> response = sendPost("/countries", payload);
+        JsonNode body = objectMapper.readTree(response.body());
+
+        assertEquals(400, response.statusCode());
+        assertEquals(400, body.get("status").asInt());
+        assertEquals("Bad Request", body.get("error").asText());
+        assertEquals("Invalid request parameters", body.get("message").asText());
+    }
+
     private HttpResponse<String> sendGet(String path) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl() + path))
                 .GET()
+                .build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> sendPost(String path, String jsonPayload) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl() + path))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                 .build();
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }

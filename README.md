@@ -34,8 +34,46 @@ mvn test
 
 ## Available Endpoints
 - `GET /countries`
+- `POST /countries`
 - `GET /countries/{countryId}/cities?page=0&size=10`
 - `GET /cities/{cityId}`
+- `POST /cities`
+
+## Create Country Example
+Request:
+- `POST /countries`
+- Body:
+  - `name`: `Portugal`
+
+Success response:
+- HTTP `201 Created`
+- Body shape:
+  - `id`
+  - `name`
+
+## Create City Example
+Request:
+- `POST /cities`
+- Body:
+  - `name`: `Porto`
+  - `countryId`: `5`
+  - `population`: `237591`
+  - `zipCode`: `4000-001`
+  - `description`: `Coastal city in northern Portugal`
+
+Success response:
+- HTTP `201 Created`
+- Body shape:
+  - `id`
+  - `name`
+  - `countryId`
+  - `population`
+  - `zipCode`
+  - `description`
+
+Validation / error behavior:
+- Invalid payload returns HTTP `400`
+- Unknown `countryId` on city creation returns HTTP `404`
 
 ## Pagination Example
 Request:

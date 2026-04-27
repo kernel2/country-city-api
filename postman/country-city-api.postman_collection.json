@@ -1,0 +1,275 @@
+{
+  "info": {
+    "_postman_id": "7db8e718-31b7-4660-a9d0-76cf936cf9b8",
+    "name": "country-city-api",
+    "description": "Collection Postman pour tester les endpoints principaux de country-city-api. Importez d'abord l'environnement fourni (baseUrl).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Countries",
+      "item": [
+        {
+          "name": "Get All Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/countries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "countries"
+              ]
+            },
+            "description": "Retourne la liste de tous les pays."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", function () {",
+                  "  pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Response is an array\", function () {",
+                  "  pm.expect(body).to.be.an('array');",
+                  "});",
+                  "",
+                  "if (body.length > 0) {",
+                  "  pm.test(\"Country item has basic fields\", function () {",
+                  "    pm.expect(body[0]).to.have.property('id');",
+                  "    pm.expect(body[0]).to.have.property('name');",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "item": [
+        {
+          "name": "Get Cities by Country 1 (page=0,size=10)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/countries/1/cities?page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "countries",
+                "1",
+                "cities"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retourne les villes du pays 1 avec pagination."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", function () {",
+                  "  pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Paged response has expected fields\", function () {",
+                  "  pm.expect(body).to.have.property('content');",
+                  "  pm.expect(body).to.have.property('page');",
+                  "  pm.expect(body).to.have.property('size');",
+                  "  pm.expect(body).to.have.property('totalElements');",
+                  "  pm.expect(body).to.have.property('totalPages');",
+                  "  pm.expect(body).to.have.property('last');",
+                  "});",
+                  "",
+                  "pm.test(\"content is array\", function () {",
+                  "  pm.expect(body.content).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Cities by Country 2 (page=0,size=5)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/countries/2/cities?page=0&size=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "countries",
+                "2",
+                "cities"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Retourne les villes du pays 2 avec pagination."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", function () {",
+                  "  pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Paged response has expected fields\", function () {",
+                  "  pm.expect(body).to.have.property('content');",
+                  "  pm.expect(body).to.have.property('page');",
+                  "  pm.expect(body).to.have.property('size');",
+                  "  pm.expect(body).to.have.property('totalElements');",
+                  "  pm.expect(body).to.have.property('totalPages');",
+                  "  pm.expect(body).to.have.property('last');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get City By Id (1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cities/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cities",
+                "1"
+              ]
+            },
+            "description": "Retourne le detail d'une ville existante."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", function () {",
+                  "  pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test(\"City detail has basic fields\", function () {",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.expect(body).to.have.property('name');",
+                  "  pm.expect(body).to.have.property('countryId');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get City By Id (3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cities/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cities",
+                "3"
+              ]
+            },
+            "description": "Retourne le detail d'une autre ville existante."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", function () {",
+                  "  pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test(\"City detail has basic fields\", function () {",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.expect(body).to.have.property('name');",
+                  "  pm.expect(body).to.have.property('countryId');",
+                  "});",
+                  "",
+                  "pm.test(\"City id is 3\", function () {",
+                  "  pm.expect(body.id).to.eql(3);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

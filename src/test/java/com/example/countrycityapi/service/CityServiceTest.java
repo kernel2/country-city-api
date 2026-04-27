@@ -3,7 +3,9 @@ package com.example.countrycityapi.service;
 import com.example.countrycityapi.dto.CityDetailsResponse;
 import com.example.countrycityapi.dto.CitySummaryResponse;
 import com.example.countrycityapi.dto.PagedResponse;
+import com.example.countrycityapi.exception.ResourceNotFoundException;
 import com.example.countrycityapi.repository.CityRepository;
+import com.example.countrycityapi.repository.CountryRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,10 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CityServiceTest {
 
-    private final CityService cityService = new CityService(new CityRepository());
+    private final CityService cityService = new CityService(new CityRepository(), new CountryRepository());
 
     @Test
     void shouldReturnCitiesByCountryWithPagination() {
@@ -50,5 +53,10 @@ class CityServiceTest {
         CityDetailsResponse response = cityService.getCityDetailsById(999L);
 
         assertNull(response);
+    }
+
+    @Test
+    void shouldThrowWhenCountryNotFound() {
+        assertThrows(ResourceNotFoundException.class, () -> cityService.getCitiesByCountryId(999L, 0, 10));
     }
 }

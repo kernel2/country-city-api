@@ -3,9 +3,11 @@ package com.example.countrycityapi.service;
 import com.example.countrycityapi.dto.CityDetailsResponse;
 import com.example.countrycityapi.dto.CitySummaryResponse;
 import com.example.countrycityapi.dto.PagedResponse;
+import com.example.countrycityapi.exception.ResourceNotFoundException;
 import com.example.countrycityapi.mapper.CityMapper;
 import com.example.countrycityapi.model.City;
 import com.example.countrycityapi.repository.CityRepository;
+import com.example.countrycityapi.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,13 +16,19 @@ import java.util.List;
 public class CityService {
 
     private final CityRepository cityRepository;
+    private final CountryRepository countryRepository;
     private final CityMapper cityMapper = new CityMapper();
 
-    public CityService(CityRepository cityRepository) {
+    public CityService(CityRepository cityRepository, CountryRepository countryRepository) {
         this.cityRepository = cityRepository;
+        this.countryRepository = countryRepository;
     }
 
     public PagedResponse<CitySummaryResponse> getCitiesByCountryId(Long countryId, int page, int size) {
+        if (!countryRepository.existsById(countryId)) {
+            throw new ResourceNotFoundException("Country not found with id: " + countryId);
+        }
+
         List<City> cities = cityRepository.getCitiesByCountryId(countryId);
 
         int safePage = Math.max(page, 0);

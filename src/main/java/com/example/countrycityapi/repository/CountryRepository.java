@@ -18,4 +18,8 @@ public class CountryRepository {
     public List<Country> getAllCountries() {
         return COUNTRIES;
     }
+
+    public boolean existsById(Long countryId) {
+        return COUNTRIES.stream().anyMatch(country -> country.getId().equals(countryId));
+    }
 }

@@ -1,44 +1,62 @@
 package com.example.countrycityapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CountryControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @LocalServerPort
+    private int port;
 
     @Test
     void shouldGetAllCountries() throws Exception {
-        mockMvc.perform(get("/countries"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(4))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("France"));
+        HttpResponse<String> response = sendGet("/countries");
+        JsonNode body = objectMapper.readTree(response.body());
+
+        assertEquals(200, response.statusCode());
+        assertEquals(4, body.size());
+        assertEquals(1L, body.get(0).get("id").asLong());
+        assertEquals("France", body.get(0).get("name").asText());
     }
 
     @Test
     void shouldGetCitiesByCountryWithPagination() throws Exception {
-        mockMvc.perform(get("/countries/{countryId}/cities", 1L)
-                        .param("page", "0")
-                        .param("size", "2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content.length()").value(2))
-                .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.size").value(2))
-                .andExpect(jsonPath("$.totalElements").value(6))
-                .andExpect(jsonPath("$.totalPages").value(3))
-                .andExpect(jsonPath("$.last").value(false));
+        HttpResponse<String> response = sendGet("/countries/1/cities?page=0&size=2");
+        JsonNode body = objectMapper.readTree(response.body());
+
+        assertEquals(200, response.statusCode());
+        assertEquals(0, body.get("page").asInt());
+        assertEquals(2, body.get("size").asInt());
+        assertEquals(6, body.get("totalElements").asLong());
+        assertEquals(3, body.get("totalPages").asInt());
+        assertFalse(body.get("last").asBoolean());
+        assertFalse(body.get("content").isEmpty());
+    }
+
+    private HttpResponse<String> sendGet(String path) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl() + path))
+                .GET()
+                .build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private String baseUrl() {
+        return "http://localhost:" + port;
     }
 }

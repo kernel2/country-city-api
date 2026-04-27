@@ -1,5 +1,6 @@
 package com.example.countrycityapi.service;
 
+import com.example.countrycityapi.dto.CityCreateRequest;
 import com.example.countrycityapi.dto.CityDetailsResponse;
 import com.example.countrycityapi.dto.CitySummaryResponse;
 import com.example.countrycityapi.dto.PagedResponse;
@@ -55,6 +56,23 @@ public class CityService {
         return cityRepository.getCityById(cityId)
                 .map(cityMapper::toDetailsResponse)
                 .orElse(null);
+    }
+
+    public CityDetailsResponse createCity(CityCreateRequest request) {
+        if (!countryRepository.existsById(request.getCountryId())) {
+            throw new ResourceNotFoundException("Country not found with id: " + request.getCountryId());
+        }
+
+        City cityToSave = new City(
+                null,
+                request.getName(),
+                request.getCountryId(),
+                request.getPopulation(),
+                request.getZipCode(),
+                request.getDescription()
+        );
+        City savedCity = cityRepository.save(cityToSave);
+        return cityMapper.toDetailsResponse(savedCity);
     }
 
     private int calculateTotalPages(int totalElements, int size) {

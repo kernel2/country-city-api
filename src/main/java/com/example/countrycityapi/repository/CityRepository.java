@@ -3,13 +3,15 @@ package com.example.countrycityapi.repository;
 import com.example.countrycityapi.model.City;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class CityRepository {
 
-    private static final List<City> CITIES = List.of(
+    private final List<City> cities = new ArrayList<>(List.of(
             new City(1L, "Paris", 1L, 2148000L, "75000", "Capital city of France"),
             new City(2L, "Lyon", 1L, 522000L, "69000", "Major city in southeastern France"),
             new City(3L, "Marseille", 1L, 873000L, "13000", "Port city on the Mediterranean coast"),
@@ -32,21 +34,35 @@ public class CityRepository {
             new City(20L, "Naples", 4L, 909000L, "80100", "Large city in southern Italy"),
             new City(21L, "Turin", 4L, 846000L, "10121", "City in northern Italy"),
             new City(22L, "Bologna", 4L, 390000L, "40121", "Historic university city in Italy")
-    );
+    ));
+    private final AtomicLong nextId = new AtomicLong(23L);
 
     public List<City> getAllCities() {
-        return CITIES;
+        return List.copyOf(cities);
     }
 
     public List<City> getCitiesByCountryId(Long countryId) {
-        return CITIES.stream()
+        return cities.stream()
                 .filter(city -> city.getCountryId().equals(countryId))
                 .toList();
     }
 
     public Optional<City> getCityById(Long cityId) {
-        return CITIES.stream()
+        return cities.stream()
                 .filter(city -> city.getId().equals(cityId))
                 .findFirst();
+    }
+
+    public City save(City city) {
+        City savedCity = new City(
+                nextId.getAndIncrement(),
+                city.getName(),
+                city.getCountryId(),
+                city.getPopulation(),
+                city.getZipCode(),
+                city.getDescription()
+        );
+        cities.add(savedCity);
+        return savedCity;
     }
 }

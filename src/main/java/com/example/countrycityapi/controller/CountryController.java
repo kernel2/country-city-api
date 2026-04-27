@@ -1,5 +1,6 @@
 package com.example.countrycityapi.controller;
 
+import com.example.countrycityapi.dto.CountryCreateRequest;
 import com.example.countrycityapi.dto.CountryResponse;
 import com.example.countrycityapi.dto.PagedResponse;
 import com.example.countrycityapi.dto.CitySummaryResponse;
@@ -13,11 +14,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +53,21 @@ public class CountryController {
     })
     public ResponseEntity<List<CountryResponse>> getCountries() {
         return ResponseEntity.ok(countryService.getAllCountries());
+    }
+
+    @PostMapping
+    @Operation(summary = "Create a country", description = "Creates a new country in memory.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Country created successfully",
+                    content = @Content(schema = @Schema(implementation = CountryResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<CountryResponse> createCountry(@Valid @RequestBody CountryCreateRequest request) {
+        CountryResponse createdCountry = countryService.createCountry(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCountry);
     }
 
     @GetMapping("/{countryId}/cities")

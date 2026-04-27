@@ -1,7 +1,9 @@
 package com.example.countrycityapi.service;
 
+import com.example.countrycityapi.dto.CountryCreateRequest;
 import com.example.countrycityapi.dto.CountryResponse;
 import com.example.countrycityapi.mapper.CountryMapper;
+import com.example.countrycityapi.model.Country;
 import com.example.countrycityapi.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +23,11 @@ public class CountryService {
         return countryRepository.getAllCountries().stream()
                 .map(countryMapper::toResponse)
                 .toList();
+    }
+
+    public CountryResponse createCountry(CountryCreateRequest request) {
+        Country countryToSave = new Country(null, request.getName());
+        Country savedCountry = countryRepository.save(countryToSave);
+        return countryMapper.toResponse(savedCountry);
     }
 }

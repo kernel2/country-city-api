@@ -1,5 +1,6 @@
 package com.example.countrycityapi.service;
 
+import com.example.countrycityapi.dto.CountryCreateRequest;
 import com.example.countrycityapi.dto.CountryResponse;
 import com.example.countrycityapi.mapper.CountryMapper;
 import com.example.countrycityapi.repository.CountryRepository;
@@ -22,5 +23,16 @@ class CountryServiceTest {
         assertEquals(4, countries.size());
         assertEquals(1L, countries.get(0).getId());
         assertEquals("France", countries.get(0).getName());
+    }
+
+    @Test
+    void shouldCreateCountry() {
+        CountryCreateRequest request = new CountryCreateRequest("Portugal");
+
+        CountryResponse created = countryService.createCountry(request);
+
+        assertNotNull(created);
+        assertNotNull(created.getId());
+        assertEquals("Portugal", created.getName());
     }
 }

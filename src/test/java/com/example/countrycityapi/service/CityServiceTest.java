@@ -1,5 +1,6 @@
 package com.example.countrycityapi.service;
 
+import com.example.countrycityapi.dto.CityCreateRequest;
 import com.example.countrycityapi.dto.CityDetailsResponse;
 import com.example.countrycityapi.dto.CitySummaryResponse;
 import com.example.countrycityapi.dto.PagedResponse;
@@ -63,5 +64,37 @@ class CityServiceTest {
     @Test
     void shouldThrowWhenCountryNotFound() {
         assertThrows(ResourceNotFoundException.class, () -> cityService.getCitiesByCountryId(999L, 0, 10));
+    }
+
+    @Test
+    void shouldCreateCity() {
+        CityCreateRequest request = new CityCreateRequest(
+                "Porto",
+                1L,
+                237591L,
+                "4000-001",
+                "Coastal city"
+        );
+
+        CityDetailsResponse created = cityService.createCity(request);
+
+        assertNotNull(created);
+        assertNotNull(created.getId());
+        assertEquals("Porto", created.getName());
+        assertEquals(1L, created.getCountryId());
+        assertEquals(237591L, created.getPopulation());
+    }
+
+    @Test
+    void shouldThrowWhenCreateCityCountryNotFound() {
+        CityCreateRequest request = new CityCreateRequest(
+                "Ghost City",
+                99999L,
+                10L,
+                "00000",
+                "Unknown country"
+        );
+
+        assertThrows(ResourceNotFoundException.class, () -> cityService.createCity(request));
     }
 }

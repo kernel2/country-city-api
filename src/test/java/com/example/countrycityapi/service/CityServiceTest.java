@@ -4,6 +4,7 @@ import com.example.countrycityapi.dto.CityDetailsResponse;
 import com.example.countrycityapi.dto.CitySummaryResponse;
 import com.example.countrycityapi.dto.PagedResponse;
 import com.example.countrycityapi.exception.ResourceNotFoundException;
+import com.example.countrycityapi.mapper.CityMapper;
 import com.example.countrycityapi.repository.CityRepository;
 import com.example.countrycityapi.repository.CountryRepository;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CityServiceTest {
 
-    private final CityService cityService = new CityService(new CityRepository(), new CountryRepository());
+    private final CityService cityService = new CityService(
+            new CityRepository(),
+            new CountryRepository(),
+            new CityMapper()
+    );
 
     @Test
     void shouldReturnCitiesByCountryWithPagination() {

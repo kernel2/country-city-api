@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CityRepository {
 
     private final List<City> cities = new ArrayList<>(List.of(
-            new City(1L, "Paris", 1L, 2148000L, "75000", "Capital city of France"),
+            new City(1L, "Paris", 1L, 2148000L, null, "Capital city of France"),
             new City(2L, "Lyon", 1L, 522000L, "69000", "Major city in southeastern France"),
             new City(3L, "Marseille", 1L, 873000L, "13000", "Port city on the Mediterranean coast"),
             new City(4L, "Toulouse", 1L, 504000L, "31000", "City in southern France"),

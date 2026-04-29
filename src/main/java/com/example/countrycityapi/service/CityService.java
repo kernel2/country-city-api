@@ -18,11 +18,12 @@ public class CityService {
 
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
-    private final CityMapper cityMapper = new CityMapper();
+    private final CityMapper cityMapper;
 
-    public CityService(CityRepository cityRepository, CountryRepository countryRepository) {
+    public CityService(CityRepository cityRepository, CountryRepository countryRepository, CityMapper cityMapper) {
         this.cityRepository = cityRepository;
         this.countryRepository = countryRepository;
+        this.cityMapper = cityMapper;
     }
 
     public PagedResponse<CitySummaryResponse> getCitiesByCountryId(Long countryId, int page, int size) {
@@ -63,14 +64,7 @@ public class CityService {
             throw new ResourceNotFoundException("Country not found with id: " + request.getCountryId());
         }
 
-        City cityToSave = new City(
-                null,
-                request.getName(),
-                request.getCountryId(),
-                request.getPopulation(),
-                request.getZipCode(),
-                request.getDescription()
-        );
+        City cityToSave = cityMapper.toModel(request);
         City savedCity = cityRepository.save(cityToSave);
         return cityMapper.toDetailsResponse(savedCity);
     }

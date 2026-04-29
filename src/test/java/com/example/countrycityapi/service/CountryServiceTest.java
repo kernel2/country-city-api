@@ -1,6 +1,7 @@
 package com.example.countrycityapi.service;
 
 import com.example.countrycityapi.dto.CountryResponse;
+import com.example.countrycityapi.mapper.CountryMapper;
 import com.example.countrycityapi.repository.CountryRepository;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CountryServiceTest {
 
-    private final CountryService countryService = new CountryService(new CountryRepository());
+    private final CountryService countryService = new CountryService(new CountryRepository(), new CountryMapper());
 
     @Test
     void shouldReturnAllCountries() {

@@ -3,7 +3,6 @@ package com.example.countrycityapi.service;
 import com.example.countrycityapi.dto.CountryCreateRequest;
 import com.example.countrycityapi.dto.CountryResponse;
 import com.example.countrycityapi.mapper.CountryMapper;
-import com.example.countrycityapi.model.Country;
 import com.example.countrycityapi.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,11 @@ import java.util.List;
 public class CountryService {
 
     private final CountryRepository countryRepository;
-    private final CountryMapper countryMapper = new CountryMapper();
+    private final CountryMapper countryMapper;
 
-    public CountryService(CountryRepository countryRepository) {
+    public CountryService(CountryRepository countryRepository, CountryMapper countryMapper) {
         this.countryRepository = countryRepository;
+        this.countryMapper = countryMapper;
     }
 
     public List<CountryResponse> getAllCountries() {
@@ -26,8 +26,8 @@ public class CountryService {
     }
 
     public CountryResponse createCountry(CountryCreateRequest request) {
-        Country countryToSave = new Country(null, request.getName());
-        Country savedCountry = countryRepository.save(countryToSave);
+        var countryToSave = countryMapper.toModel(request);
+        var savedCountry = countryRepository.save(countryToSave);
         return countryMapper.toResponse(savedCountry);
     }
 }

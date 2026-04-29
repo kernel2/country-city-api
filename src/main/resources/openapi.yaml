@@ -342,7 +342,7 @@ components:
           example: Not Found
         message:
           type: string
-          example: City not found with id: 99999
+          example: "City not found with id: 99999"
         path:
           type: string
           example: /cities/99999
